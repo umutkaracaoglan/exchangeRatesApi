@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserActivityLogs;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -75,6 +77,21 @@ class UserController extends ApiController
         ], 'Login successfully.');
     }
 
+    public function logout()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tokenCount = $user->tokens()->delete();
+
+        return $this->success([],"Logout successfully. {$tokenCount} token(s) revoked.");
+    }
+
+    public function activities(Request $request)
+    {
+        $userActivities = UserActivityLogs::where('user_id', $request->user()->id)->get();
+
+        return $this->success($userActivities->toArray());
+    }
 
     /**
      * Display a listing of the resource.

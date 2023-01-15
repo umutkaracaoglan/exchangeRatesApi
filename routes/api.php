@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\TestController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +18,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->group(function () {
     Route::post('register', [UserController::class,'register']);
-    Route::post('login', [UserController::class,'login']);
+    Route::post('login', [UserController::class,'login'])->name('user.login');
     //Route::get('test', [UserController::class,'test']);
+});
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/user/logout', [UserController::class,'logout']);
+    Route::post('/user/activities', [UserController::class,'activities']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
