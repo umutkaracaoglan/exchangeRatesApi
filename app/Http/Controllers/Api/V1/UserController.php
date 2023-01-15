@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,68 +17,62 @@ class UserController extends ApiController
         return "hello";
     }
 
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
-        $validate = Validator::make(
-            $request->all(),
-            [
-                'first_name' => 'required|string|max:255',
-                'last_name'  => 'required|string|max:255',
-                'email'      => 'required|string|max:255|email|unique:users',
-                'password'   => [
-                    'required',
-                    'string',
-                    'min:6',
-                    'regex:/[0-9]/',
-                    'regex:/[a-z]/',
-                    'regex:/[A-Z]/',
-                    'regex:/[*.!#$]/'
-                ],
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'required|string|max:255',
+            'email'      => 'required|string|max:255|email|unique:users',
+            'password'   => [
+                'required',
+                'string',
+                'min:6',
+                'regex:/[0-9]/',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[*.!#$]/'
             ]
-        );
-
-        if (!$validate) {
-           return $this->error(400,$validate->errors());
-        }
+        ]);
 
         $user             = new User();
-        $user->first_name = $request["first_name"];
-        $user->last_name  = $request['last_name'];
-        $user->email      = $request['email'];
-        $user->password   = Hash::make($request['password']);
+        $user->first_name = $validatedData["first_name"];
+        $user->last_name  = $validatedData['last_name'];
+        $user->email      = $validatedData['email'];
+        $user->password   = Hash::make($validatedData['password']);
         $user->save();
 
-        return $this->success(json_encode($user),'Registration successfully.');
+        return $this->success($user->toArray(), 'Registration successfully.');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        $validate = Validator::make(
-            $request->all(),
-            [
-                'email'    => 'required|string|max:255|email|unique:users',
-                'password' => [
-                    'required',
-                    'string',
-                    'min:6',
-                    'regex:/[0-9]/',
-                    'regex:/[a-z]/',
-                    'regex:/[A-Z]/',
-                    'regex:/[*.!#$]/'
-                ]
-            ],
-            [
-                'name.required' => __('name.ErrorNameRequired'),
+        $validatedData = $request->validate([
+            'email'    => 'required|string|max:255|email',
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+                'regex:/[0-9]/',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[*.!#$]/'
             ]
-        );
+        ]);
 
-        if(!$validate){
-            return $this->error(400,$validate->errors());
+        /** @var User $user */
+        $user = User::where('email', $validatedData['email'])->first();
+
+        if (!$user || !Hash::check($validatedData['password'], $user)) {
+            $this->error(401, 'Login failed.');
         }
 
+        // create auth token
+        $authToken = $user->createToken('')->plainTextToken;;
 
-        //return bearer token
-        return $this->success(null,'Login successfully.');
+        return $this->success([
+            'user'  => $user,
+            'token' => $authToken
+        ], 'Login successfully.');
     }
 
 
