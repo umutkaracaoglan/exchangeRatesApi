@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('endpoint');
-            $table->string('http_status');
-            $table->timestamp('called_at');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

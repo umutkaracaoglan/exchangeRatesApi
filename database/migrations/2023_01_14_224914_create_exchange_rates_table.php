@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255)->unique();
-            $table->string('code', 6)->unique();
+            $table->string('name', 255);
+            $table->string('code', 6);
             $table->float('rate_buy')->nullable();
             $table->float('rate_sell')->nullable();
             $table->timestamps();
