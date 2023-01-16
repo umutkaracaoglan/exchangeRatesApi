@@ -8,6 +8,7 @@ use App\Models\UserActivityLogs;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -80,10 +81,10 @@ class UserController extends ApiController
     public function logout()
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user       = Auth::user();
         $tokenCount = $user->tokens()->delete();
 
-        return $this->success([],"Logout successfully. {$tokenCount} token(s) revoked.");
+        return $this->success([], "Logout successfully. {$tokenCount} token(s) revoked.");
     }
 
     public function activities(Request $request)
@@ -104,23 +105,27 @@ class UserController extends ApiController
         //Pagination
         $perPage = $request->input('per_page', 25);
         return $user->paginate($perPage);
-        //return $user->get();
     }
 
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-        $perPage = $request->input('per_page', 25);
+        $user     = Auth::user();
+        $perPage  = $request->input('per_page', 25);
+        $cacheKey = 'user_activities' . $user->id . '_page_' . $request->input('page', 1);
+
+        // Caching
+        $activityLogs = Cache::remember($cacheKey, 60 * 24, function () use ($user, $perPage) {
+            return $user->activityLogs()->paginate($perPage);
+        });
 
         return $this->success([
-            'user' => $user->toArray(),
-            'activities' => $user->activityLogs()->paginate($perPage)
+            'user'       => $user->toArray(),
+            'activities' => $activityLogs
         ]);
     }
 
