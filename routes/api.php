@@ -24,10 +24,9 @@ Route::prefix('user')->group(function () {
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/user/logout', [UserController::class, 'logout']);
-    Route::post('/user/activities', [UserController::class, 'activities']);
+    Route::get('/user/logout', [UserController::class, 'logout']);
+    Route::get('/user/activities', [UserController::class, 'activities']);
     Route::get('/user', [UserController::class, 'index']);
-
     Route::get('/exchange', [ExchangeRateController::class, 'index']);
     Route::get('/exchange/convert', [ExchangeRateController::class, 'convert']);
 });
