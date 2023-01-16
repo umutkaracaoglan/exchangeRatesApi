@@ -42,7 +42,9 @@ class ExchangeRateController extends ApiController
             $exchangeRates->where('code', $request->input('code'));
         }
 
-        return $exchangeRates->get();
+        //Pagination
+        $perPage = $request->input('per_page', 25);
+        return $exchangeRates->paginate($perPage);
     }
 
     /**

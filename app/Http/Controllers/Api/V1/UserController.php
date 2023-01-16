@@ -101,10 +101,11 @@ class UserController extends ApiController
             $user->where('endpoint', $request->input('endpoint'));
         }
 
-        return $user->get();
+        //Pagination
+        $perPage = $request->input('per_page', 25);
+        return $user->paginate($perPage);
+        //return $user->get();
     }
-
-
 
 
     /**
@@ -115,9 +116,11 @@ class UserController extends ApiController
     public function index(Request $request)
     {
         $user = Auth::user();
+        $perPage = $request->input('per_page', 25);
+
         return $this->success([
             'user' => $user->toArray(),
-            'activities' => $user->activityLogs
+            'activities' => $user->activityLogs()->paginate($perPage)
         ]);
     }
 
