@@ -27,6 +27,7 @@ You can use the following endpoints to retrieve data:
 ### Endpoints:
 
 - /user/register: Allows for new user registration.
+- /user: Returns currently logged in user's information and list of their activities
 - /user/login: Allows for existing users to log in to the system.
 - /user/logout: Allows for logged in users to log out of the system.
 - /user/activities: Returns a list of activities for a specific user.
