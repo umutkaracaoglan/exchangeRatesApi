@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::prefix('user')->group(function () {
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [UserController::class, 'login'])->name('user.login');
@@ -27,11 +26,8 @@ Route::prefix('user')->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [UserController::class, 'logout']);
     Route::post('/user/activities', [UserController::class, 'activities']);
+    Route::get('/user', [UserController::class, 'index']);
 
     Route::get('/exchange', [ExchangeRateController::class, 'index']);
     Route::get('/exchange/convert', [ExchangeRateController::class, 'convert']);
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user('api');
 });
