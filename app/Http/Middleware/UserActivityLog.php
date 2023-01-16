@@ -21,7 +21,7 @@ class UserActivityLog implements TerminableInterface
     public function handle(Request $request, Closure $next)
     {
         if ($request->user('api')) {
-            $user_id = $request->user()->id;
+            $user_id = $request->user('api')->id;
 
             $userActivityLog = new UserActivityLogs();
             $userActivityLog->user_id = $user_id;
