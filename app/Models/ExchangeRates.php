@@ -14,7 +14,7 @@ class ExchangeRates extends Model
     ];
 
     protected $hidden = [
-        'id', 'updated_at'
+        'id', 'created_at'
     ];
 
 

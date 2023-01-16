@@ -13,8 +13,7 @@ class ExchangeRateController extends ApiController
     public function index(Request $request)
     {
         $date = Carbon::now()->subMinutes(15);
-        $echangeRates = ExchangeRates::where('created_at', '>=', $date);
-
+        $echangeRates = ExchangeRates::where('updated_at', '>=', $date);
 
         return $this->success( $this->filter($request, $echangeRates)->toArray());
     }
