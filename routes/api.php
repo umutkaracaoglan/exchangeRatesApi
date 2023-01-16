@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ExchangeRateController;
 use App\Http\Controllers\Api\V1\TestController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
@@ -25,8 +26,11 @@ Route::prefix('user')->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/logout', [UserController::class,'logout']);
     Route::post('/user/activities', [UserController::class,'activities']);
+    //Route::post('/user', [UserController::class,'index']);
+
+    Route::get('/exchange', [ExchangeRateController::class, 'index']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user('api');
 });

@@ -33,6 +33,7 @@ class GetExchangeRates extends Command
      */
     public function handle()
     {
+
         // Only 5 currencies
         $selectedRates = ['USD', 'EUR', 'GBP', 'JPY', 'CHF' ];
         $client = new \GuzzleHttp\Client();
@@ -66,4 +67,7 @@ class GetExchangeRates extends Command
         Log::info('GetExchangeRates command ran on ' . Carbon::now());
         return Command::SUCCESS;
     }
+
+
+
 }

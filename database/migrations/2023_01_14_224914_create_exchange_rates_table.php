@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 255);
             $table->string('code', 6);
-            $table->float('rate_buy')->nullable();
-            $table->float('rate_sell')->nullable();
+            $table->float('rate_buy',8,4)->nullable();
+            $table->float('rate_sell',8,4)->nullable();
             $table->timestamps();
         });
     }
