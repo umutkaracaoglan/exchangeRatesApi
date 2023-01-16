@@ -88,19 +88,37 @@ class UserController extends ApiController
 
     public function activities(Request $request)
     {
-        $userActivities = UserActivityLogs::where('user_id', $request->user()->id)->get();
-
-        return $this->success($userActivities->toArray());
+        $userActivities = UserActivityLogs::where('user_id', $request->user()->id);
+        return $this->success($this->filter($request, $userActivities)->toArray());
     }
+
+    /**
+     * Filtering endpoint
+     */
+    public function filter(Request $request, $user)
+    {
+        if ($request->has('endpoint')) {
+            $user->where('endpoint', $request->input('endpoint'));
+        }
+
+        return $user->get();
+    }
+
+
+
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = Auth::user();
+        return $this->success([
+            'user' => $user->toArray(),
+            'activities' => $user->activityLogs
+        ]);
     }
 
     /**
