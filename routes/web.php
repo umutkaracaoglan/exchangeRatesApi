@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::get('/', function () {
-    return view('welcome');
-});*/
+Route::get('/', function () {
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Welcome to exchange rates api!',
+    ], 200);
+    //return view('welcome');
+});
