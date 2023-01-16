@@ -12,4 +12,10 @@ class ExchangeRates extends Model
     protected $fillable = [
         'name', 'code', 'rate_buy', 'rate_sell'
     ];
+
+    protected $hidden = [
+        'id', 'updated_at'
+    ];
+
+
 }
